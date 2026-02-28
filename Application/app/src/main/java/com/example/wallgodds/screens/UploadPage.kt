@@ -88,7 +88,7 @@ fun UploadPage(navController: NavController) {
     }
 
     // Check if upload button should be enabled
-    val isUploadButtonEnabled = wallpaperName.isNotEmpty() && selectedCategory.isNotEmpty()
+    val isUploadButtonEnabled = wallpaperName.trim().isNotEmpty() && selectedCategory.isNotEmpty()
 
     Column(
         modifier = Modifier
@@ -251,8 +251,9 @@ fun UploadPage(navController: NavController) {
                     .height(44.dp),
                 shape = RoundedCornerShape(22.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (isUploadButtonEnabled) Color(0xFF7056F5) else Color(0xFFB0C4FF),
-                    disabledContainerColor = Color(0xFFB0C4FF)
+                    containerColor = if (isUploadButtonEnabled) Color(0xFF7C5CFC) else Color(0xFFE0DAE8),
+                    disabledContainerColor = Color(0xFFE0DAE8),
+                    disabledContentColor = Color(0xFFADA8B5)
                 ),
                 enabled = isUploadButtonEnabled
             ) {
@@ -261,7 +262,7 @@ fun UploadPage(navController: NavController) {
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Medium,
                     fontFamily = poppinsFontFamily,
-                    color = Color.White
+                    color = if (isUploadButtonEnabled) Color.White else Color(0xFFADA8B5)
                 )
             }
 
