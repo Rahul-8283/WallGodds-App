@@ -1,6 +1,7 @@
 package com.example.wallgodds.screens
 
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -9,13 +10,17 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
@@ -25,8 +30,8 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -68,6 +74,8 @@ private val WALLPAPER_CATEGORIES = listOf(
 @Composable
 fun UploadPage(navController: NavController) {
 
+    val context = LocalContext.current
+
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
     var wallpaperName by remember { mutableStateOf("") }
     var selectedCategory by remember { mutableStateOf("") }
@@ -86,11 +94,11 @@ fun UploadPage(navController: NavController) {
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = AppPadding.MainContentPadding)
-            .padding(bottom = 90.dp),
+            .padding(bottom = 140.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         // Image Preview or Upload Placeholder
         if (selectedImageUri != null) {
@@ -98,7 +106,7 @@ fun UploadPage(navController: NavController) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(260.dp)
+                    .weight(1f)
                     .clip(RoundedCornerShape(20.dp))
                     .background(Color(0xFFF8F6FF))
                     .clickable { launcher.launch("image/*") },
@@ -116,68 +124,28 @@ fun UploadPage(navController: NavController) {
 
             Spacer(modifier = Modifier.height(AppPadding.Medium))
 
-            // Wallpaper Name TextField
-            OutlinedTextField(
-                value = wallpaperName,
-                onValueChange = { wallpaperName = it },
-                label = {
-                    Text(
-                        "Wallpaper name",
-                        fontSize = 14.sp,
-                        fontFamily = poppinsFontFamily
-                    )
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color(0xFFF8F6FF),
-                    unfocusedContainerColor = Color(0xFFF8F6FF),
-                    focusedBorderColor = Color(0xFF407BFF),
-                    unfocusedBorderColor = Color(0xFFDCDCDC),
-                    focusedLabelColor = Color(0xFF407BFF),
-                    unfocusedLabelColor = Color(0xFF808080)
-                ),
-                textStyle = androidx.compose.material3.LocalTextStyle.current.copy(
-                    fontSize = 14.sp,
-                    fontFamily = poppinsFontFamily,
-                    color = Color.Black
-                ),
-                singleLine = true
-            )
-
-            Spacer(modifier = Modifier.height(AppPadding.Medium))
-
-            // Category Dropdown
-            Box(modifier = Modifier.fillMaxWidth()) {
+            // Wallpaper Name + Category Row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(AppPadding.Small)
+            ) {
+                // Wallpaper Name TextField
                 OutlinedTextField(
-                    value = selectedCategory,
-                    onValueChange = {},
-                    label = {
+                    value = wallpaperName,
+                    onValueChange = { wallpaperName = it },
+                    placeholder = {
                         Text(
-                            "Category",
-                            fontSize = 14.sp,
-                            fontFamily = poppinsFontFamily
+                            "Wallpaper name",
+                            fontSize = 13.sp,
+                            fontFamily = poppinsFontFamily,
+                            color = Color(0xFF808080)
                         )
                     },
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp)
-                        .clickable { expandedDropdown = !expandedDropdown },
-                    shape = RoundedCornerShape(16.dp),
-                    readOnly = true,
-                    trailingIcon = {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowDropDown,
-                            contentDescription = "Dropdown",
-                            tint = Color(0xFF407BFF),
-                            modifier = Modifier
-                                .size(24.dp)
-                                .clickable { expandedDropdown = !expandedDropdown }
-                        )
-                    },
-                    colors = TextFieldDefaults.colors(
+                        .weight(1.5f)
+                        .height(50.dp),
+                    shape = RoundedCornerShape(25.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
                         focusedContainerColor = Color(0xFFF8F6FF),
                         unfocusedContainerColor = Color(0xFFF8F6FF),
                         focusedBorderColor = Color(0xFF407BFF),
@@ -186,61 +154,111 @@ fun UploadPage(navController: NavController) {
                         unfocusedLabelColor = Color(0xFF808080)
                     ),
                     textStyle = androidx.compose.material3.LocalTextStyle.current.copy(
-                        fontSize = 14.sp,
+                        fontSize = 13.sp,
                         fontFamily = poppinsFontFamily,
                         color = Color.Black
                     ),
                     singleLine = true
                 )
 
-                // Dropdown Menu
-                DropdownMenu(
-                    expanded = expandedDropdown,
-                    onDismissRequest = { expandedDropdown = false },
-                    modifier = Modifier
-                        .fillMaxWidth(0.9f)
-                        .align(Alignment.TopCenter)
-                ) {
-                    WALLPAPER_CATEGORIES.forEach { category ->
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    category,
-                                    fontSize = 14.sp,
-                                    fontFamily = poppinsFontFamily,
-                                    color = Color.Black
-                                )
-                            },
-                            onClick = {
-                                selectedCategory = category
-                                expandedDropdown = false
-                            }
-                        )
+                // Category Dropdown
+                Box(modifier = Modifier.weight(1f)) {
+                    OutlinedTextField(
+                        value = selectedCategory,
+                        onValueChange = {},
+                        placeholder = {
+                            Text(
+                                "Category",
+                                fontSize = 13.sp,
+                                fontFamily = poppinsFontFamily,
+                                color = Color(0xFF808080)
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp)
+                            .clickable { expandedDropdown = !expandedDropdown },
+                        shape = RoundedCornerShape(25.dp),
+                        readOnly = true,
+                        trailingIcon = {
+                            Icon(
+                                imageVector = Icons.Filled.ArrowDropDown,
+                                contentDescription = "Dropdown",
+                                tint = Color(0xFF808080),
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .clickable { expandedDropdown = !expandedDropdown }
+                            )
+                        },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedContainerColor = Color(0xFFF8F6FF),
+                            unfocusedContainerColor = Color(0xFFF8F6FF),
+                            focusedBorderColor = Color(0xFF407BFF),
+                            unfocusedBorderColor = Color(0xFFDCDCDC),
+                            focusedLabelColor = Color(0xFF407BFF),
+                            unfocusedLabelColor = Color(0xFF808080)
+                        ),
+                        textStyle = androidx.compose.material3.LocalTextStyle.current.copy(
+                            fontSize = 13.sp,
+                            fontFamily = poppinsFontFamily,
+                            color = Color.Black
+                        ),
+                        singleLine = true
+                    )
+
+                    // Dropdown Menu
+                    DropdownMenu(
+                        expanded = expandedDropdown,
+                        onDismissRequest = { expandedDropdown = false },
+                        modifier = Modifier
+                            .fillMaxWidth(0.4f)
+                            .background(Color(0xFFF8F6FF))
+                    ) {
+                        WALLPAPER_CATEGORIES.forEach { category ->
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        category,
+                                        fontSize = 13.sp,
+                                        fontFamily = poppinsFontFamily,
+                                        color = Color(0xFF3C56B1)
+                                    )
+                                },
+                                modifier = Modifier.background(Color(0xFFF8F6FF)),
+                                onClick = {
+                                    selectedCategory = category
+                                    expandedDropdown = false
+                                }
+                            )
+                        }
                     }
                 }
             }
 
-            Spacer(modifier = Modifier.height(AppPadding.Large))
+            Spacer(modifier = Modifier.height(AppPadding.Medium))
 
             // Upload Button with State Validation
             Button(
                 onClick = {
-                    // No actual upload action required per requirements
-                    // Button is just for UI demonstration
+                    Toast.makeText(
+                        context,
+                        "\"$wallpaperName\" uploaded under $selectedCategory!",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 },
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp),
-                shape = RoundedCornerShape(12.dp),
+                    .fillMaxWidth(0.65f)
+                    .height(44.dp),
+                shape = RoundedCornerShape(22.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (isUploadButtonEnabled) Color(0xFF407BFF) else Color(0xFFB0C4FF),
+                    containerColor = if (isUploadButtonEnabled) Color(0xFF7056F5) else Color(0xFFB0C4FF),
                     disabledContainerColor = Color(0xFFB0C4FF)
                 ),
                 enabled = isUploadButtonEnabled
             ) {
                 Text(
                     "Upload",
-                    fontSize = 16.sp,
+                    fontSize = 15.sp,
                     fontWeight = FontWeight.Medium,
                     fontFamily = poppinsFontFamily,
                     color = Color.White
